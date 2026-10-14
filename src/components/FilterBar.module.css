@@ -1,0 +1,78 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-4);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-muted);
+}
+
+.input,
+.select {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  padding: var(--space-1) var(--space-2);
+  min-width: 160px;
+}
+
+.input:focus,
+.select:focus {
+  outline: 1px solid var(--color-fg);
+  outline-offset: -1px;
+}
+
+.yearRange {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.yearInput {
+  width: 64px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  padding: var(--space-1) var(--space-2);
+}
+
+.dash {
+  color: var(--color-muted);
+}
+
+.chips {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.chip {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  cursor: pointer;
+}
+
+.chip:hover {
+  border-color: var(--color-fg);
+}
+
+.chipActive {
+  background: var(--color-bg-inverse);
+  color: var(--color-fg-inverse);
+  border-color: var(--color-bg-inverse);
+}

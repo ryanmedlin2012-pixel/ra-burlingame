@@ -1,0 +1,26 @@
+.page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-8);
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.title {
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.count {
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
