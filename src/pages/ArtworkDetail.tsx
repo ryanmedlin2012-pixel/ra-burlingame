@@ -135,6 +135,18 @@ export default function ArtworkDetail() {
             </dd>
             <dt>MEDIUM</dt>
             <dd>{artwork.medium ?? '—'}</dd>
+            {artwork.physicalSize && (
+              <>
+                <dt>SIZE</dt>
+                <dd>{artwork.physicalSize}</dd>
+              </>
+            )}
+            {artwork.shows && (
+              <>
+                <dt>SHOWS</dt>
+                <dd>{artwork.shows}</dd>
+              </>
+            )}
             {artwork.bodyOfWork && (
               <>
                 <dt>COLLECTION</dt>

@@ -184,6 +184,59 @@ PHOTO_BACKGROUND_OVERRIDES: dict[str, str] = {
 # captures what was a deliberately chosen name at the time of renaming.
 RENAMED_STEM_RE = re.compile(r"^\d{4}-\d{2}-\d{2}-(.+)-\d{2}$")
 
+# Catalog data for pieces matched against ~/Documents/art/art_inventory.pdf
+# (the private collector spreadsheet). Only medium / physical size / public
+# exhibition history are ever pulled from that file — price, sold/sold-to,
+# buyer address, phone and email must never appear here or reach the site.
+PIECE_METADATA: dict[str, dict] = {
+    "2025-02-27-1982-01": {
+        "medium": "Oil and acrylics on canvas",
+        "physicalSize": "14 × 14 in",
+    },
+    "2025-02-27-dark-mountain-01": {
+        "medium": "Mixed media on wood panel",
+        "physicalSize": "26 × 16 in",
+    },
+    "2025-02-27-see-you-01": {
+        "medium": "Mixed media",
+        "physicalSize": "8.5 × 10 in",
+    },
+    "2024-10-29-blue-sunshine-05": {
+        "medium": "Oil and acrylics on raw canvas",
+        "physicalSize": "20 × 20 in",
+        "shows": "Van der Plas Gallery, NYC — October 2025",
+    },
+    "2024-10-29-magic-mountain-01": {
+        "medium": "Mixed media on wood panel",
+        "physicalSize": "36 × 12 in",
+    },
+    "201": {
+        "medium": "Collage / assemblage",
+        "physicalSize": "16 × 17 in",
+    },
+    "2023-05-25-chirotic-mileau-01": {
+        "medium": "Acrylic and oils on canvas",
+        "physicalSize": "20 × 20 in",
+    },
+    "2015-09-17-crisco-01": {
+        "medium": "Mixed media, collage, resin",
+        "physicalSize": "19 × 14.75 in",
+    },
+    "2015-09-17-self-moment-01": {
+        "medium": "Mixed media, collage, resin, acrylics",
+        "physicalSize": "24.25 × 24.25 in",
+        "shows": "Mount Analogue: The Door to the Invisible Must Be Made Visible — Seattle",
+    },
+    "2013-08-10-gene-01": {
+        "medium": "Collage / digital print",
+        "physicalSize": "16.5 × 20.5 in",
+    },
+    "2013-08-03-new-religion-11-01": {
+        "medium": "Mixed media, collage, resin, dye",
+        "physicalSize": "9.75 × 15 in",
+    },
+}
+
 
 def compute_vignette(photo_id: str, piece_id: str) -> tuple[bool, int, int]:
     """(enabled, blur, inset) for one photo — photo-level override wins,
@@ -319,6 +372,11 @@ def main():
         medium = (primary.get("proposed_inventory_medium") or primary.get("detected_medium_hint") or "").strip() or None
         body_of_work = (primary.get("body_of_work") or "").strip() or None
 
+        catalog = PIECE_METADATA.get(artwork_id, {})
+        medium = catalog.get("medium", medium)
+        physical_size = catalog.get("physicalSize")
+        shows = catalog.get("shows")
+
         piece_override = BACKGROUND_OVERRIDES.get(artwork_id)
 
         thumb_rel = f"images/thumb/{artwork_id}.jpg"
@@ -362,6 +420,8 @@ def main():
             "height": height,
             "megapixels": megapixels,
             "medium": medium,
+            "physicalSize": physical_size,
+            "shows": shows,
             "bodyOfWork": body_of_work,
             "thumb": f"/{thumb_rel}",
             "full": f"/{full_rel}",

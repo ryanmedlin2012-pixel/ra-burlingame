@@ -20,6 +20,8 @@ export interface Artwork {
   height: number | null;
   megapixels: number | null;
   medium: string | null;
+  physicalSize: string | null;
+  shows: string | null;
   bodyOfWork: string | null;
   thumb: string;
   full: string;
