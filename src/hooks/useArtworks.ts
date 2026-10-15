@@ -27,6 +27,7 @@ export interface Artwork {
   notes: string | null;
   bodyOfWork: string | null;
   thumb: string;
+  cardThumb: string | null;
   full: string;
   backgroundColor: string;
   vignette: boolean;
@@ -35,6 +36,9 @@ export interface Artwork {
   vignetteSides: 'all' | 'horizontal';
   imagePadding: number;
   fillOverride: string | null;
+  cardBackground: string | null;
+  cardObjectFit: 'contain' | 'cover';
+  cardZoom: number;
   paddingY: number;
   alternates: AlternatePhoto[];
 }

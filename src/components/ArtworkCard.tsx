@@ -5,8 +5,19 @@ import styles from './ArtworkCard.module.css';
 export default function ArtworkCard({ artwork }: { artwork: Artwork }) {
   return (
     <Link to={`/piece/${artwork.id}`} className={styles.card}>
-      <div className={styles.imageWrap}>
-        <img src={artwork.thumb} alt={artwork.title} loading="lazy" />
+      <div
+        className={styles.imageWrap}
+        style={{ backgroundColor: artwork.cardBackground ?? artwork.fillOverride ?? artwork.backgroundColor }}
+      >
+        <img
+          src={artwork.cardThumb ?? artwork.thumb}
+          alt={artwork.title}
+          loading="lazy"
+          style={{
+            objectFit: artwork.cardObjectFit,
+            transform: artwork.cardZoom !== 1 ? `scale(${artwork.cardZoom})` : undefined,
+          }}
+        />
       </div>
     </Link>
   );

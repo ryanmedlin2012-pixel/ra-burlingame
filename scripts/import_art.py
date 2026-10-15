@@ -220,6 +220,47 @@ PHOTO_BACKGROUND_OVERRIDES: dict[str, str] = {
 # captures what was a deliberately chosen name at the time of renaming.
 RENAMED_STEM_RE = re.compile(r"^\d{4}-\d{2}-\d{2}-(.+)-\d{2}$")
 
+# Forces a specific Work-grid card's thumbnail container to a flat color —
+# independent of the detail page's fillOverride, since a card's fixed
+# square aspect ratio can show a seam that the full detail page doesn't.
+CARD_OBJECT_FIT_OVERRIDES: dict[str, str] = {
+    "2013-08-10-fresh-meat-market-01": "cover",  # Untitled (for Dennis Cooper) — zoom to fill
+    "2013-07-13-psychic-twinks-1-01": "cover",  # Untitled (enforcement)
+    "2013-07-13-helen-anne-01": "cover",  # Helen Anne
+    "2013-07-14-untitled-10-01": "cover",  # Untitled 10
+    "2013-08-10-untitled-91-01": "cover",  # Untitled 91
+    "2013-08-10-untitled-51-01": "cover",  # Untitled 51
+    "2023-01-20-untitled-23-01": "cover",  # Untitled 23
+}
+
+# Scales a card's thumbnail up beyond 100% (combined with object-fit: cover)
+# for a more dramatic crop-in than cover alone gives on a near-square photo.
+CARD_ZOOM_OVERRIDES: dict[str, float] = {
+    "2013-08-10-fresh-meat-market-01": 2.2,
+    "2013-07-13-psychic-twinks-1-01": 2.2,
+    "2013-07-14-untitled-10-01": 2.2,
+    "2013-08-10-untitled-51-01": 2.2,
+    "2023-01-20-untitled-23-01": 2.2,
+}
+
+# Pre-crops a dedicated card thumbnail to just one region of the photo
+# (pixel box: left, top, right, bottom, in the ORIGINAL file's orientation)
+# — for a card that should show only part of a multi-object photo, rather
+# than relying on object-fit/zoom against the whole image.
+CARD_CROP_OVERRIDES: dict[str, tuple[int, int, int, int]] = {
+    "2013-07-13-helen-anne-01": (90, 100, 596, 598),  # just the Helen Reddy sleeve
+    "2013-08-10-untitled-91-01": (223, 260, 1527, 1940),  # just the bust/poster panel, zoomed in
+}
+
+CARD_BACKGROUND_OVERRIDES: dict[str, str] = {
+    "2023-01-20-untitled-25-01": "#ffffff",  # Untitled (embrace)
+    "2023-01-20-untitled-21-01": "#ffffff",  # Untitled 21
+    "2023-01-20-untitled-23-01": "#ffffff",  # Untitled 23
+    "2023-01-20-untitled-22-01": "#ffffff",  # Untitled (enforcement)
+    "2013-08-10-fresh-meat-market-01": "#f2f2f2",  # Untitled (for Dennis Cooper) — back to plain default
+    "2015-09-17-crisco-01": "#f2f2f2",  # Crisco — back to plain default
+}
+
 # Catalog data for pieces matched against ~/Documents/art/art_inventory.pdf
 # (the private collector spreadsheet). Only medium / physical size / public
 # exhibition history are ever pulled from that file — price, sold/sold-to,
@@ -436,6 +477,20 @@ def save_derivative(src_path: Path, dest_path: Path, long_edge: int, quality: in
         return corner_background_color(img)
 
 
+def save_card_crop(src_path: Path, dest_path: Path, box: tuple[int, int, int, int], long_edge: int, quality: int) -> None:
+    """Like save_derivative, but crops to `box` (in the exif-corrected
+    image's pixel coordinates) before resizing — for a Work-grid card
+    thumbnail that should show only part of the full photo."""
+    with Image.open(src_path) as img:
+        img = ImageOps.exif_transpose(img)
+        img = img.convert("RGB").crop(box)
+        ratio = long_edge / max(img.width, img.height)
+        if ratio < 1:
+            img = img.resize((max(1, round(img.width * ratio)), max(1, round(img.height * ratio))))
+        dest_path.parent.mkdir(parents=True, exist_ok=True)
+        img.save(dest_path, format="JPEG", quality=quality)
+
+
 def main():
     ap = argparse.ArgumentParser(description="Build artworks.json + image derivatives from full_index.csv")
     ap.add_argument("--csv", default=str(DEFAULT_CSV))
@@ -516,6 +571,14 @@ def main():
         background_color = save_derivative(
             Path(primary["original_path"]), repo_root / "public" / full_rel, FULL_LONG_EDGE, FULL_QUALITY
         )
+
+        card_thumb_rel = None
+        crop_box = CARD_CROP_OVERRIDES.get(artwork_id)
+        if crop_box:
+            card_thumb_rel = f"images/thumb/{artwork_id}-card.jpg"
+            save_card_crop(
+                Path(primary["original_path"]), repo_root / "public" / card_thumb_rel, crop_box, THUMB_LONG_EDGE, THUMB_QUALITY
+            )
         # fillOverride is the color to force-display (piece-level wins if both
         # are set); None means "no explicit override, use backgroundColor only
         # while vignette is on" — see ArtworkDetail.tsx.
@@ -558,6 +621,7 @@ def main():
             "notes": notes,
             "bodyOfWork": body_of_work,
             "thumb": f"/{thumb_rel}",
+            "cardThumb": f"/{card_thumb_rel}" if card_thumb_rel else None,
             "full": f"/{full_rel}",
             "backgroundColor": background_color,
             "vignette": primary_vignette,
@@ -566,6 +630,9 @@ def main():
             "vignetteSides": PHOTO_VIGNETTE_SIDES.get(artwork_id, "all"),
             "imagePadding": IMAGE_PADDING_OVERRIDES.get(artwork_id, DEFAULT_IMAGE_PADDING),
             "fillOverride": fill_override,
+            "cardBackground": CARD_BACKGROUND_OVERRIDES.get(artwork_id),
+            "cardObjectFit": CARD_OBJECT_FIT_OVERRIDES.get(artwork_id, "contain"),
+            "cardZoom": CARD_ZOOM_OVERRIDES.get(artwork_id, 1),
             "paddingY": PHOTO_PADDING_Y_OVERRIDES.get(artwork_id, 0),
             "alternates": alt_photos,
         })

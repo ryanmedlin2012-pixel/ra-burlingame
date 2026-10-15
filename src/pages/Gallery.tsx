@@ -26,21 +26,18 @@ export default function Gallery() {
     <div>
       <Nav />
       <div className={styles.page}>
-        <header className={styles.header}>
-          <h1 className={styles.title}>WORK</h1>
-          <div className={styles.headerRight}>
-            <span className={styles.count}>
-              {artworks.length} / {total}
-            </span>
-            <button
-              type="button"
-              className={styles.filterToggle}
-              onClick={() => setFiltersOpen((v) => !v)}
-            >
-              {filtersOpen ? 'HIDE FILTERS' : 'FILTERS'}
-            </button>
-          </div>
-        </header>
+        <div className={styles.header}>
+          <button
+            type="button"
+            className={styles.filterToggle}
+            onClick={() => setFiltersOpen((v) => !v)}
+          >
+            {filtersOpen ? 'HIDE FILTERS' : 'FILTERS'}
+          </button>
+          <span className={styles.mobileCount}>
+            {artworks.length} / {total}
+          </span>
+        </div>
 
         <div className={`${styles.filterWrap} ${filtersOpen ? '' : styles.filterWrapCollapsed}`}>
           <FilterBar
@@ -56,6 +53,8 @@ export default function Gallery() {
             onYearMaxChange={setYearMax}
             sizeBucket={sizeBucket}
             onSizeBucketChange={setSizeBucket}
+            count={artworks.length}
+            total={total}
           />
         </div>
 

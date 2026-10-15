@@ -14,6 +14,8 @@ interface Props {
   onYearMaxChange: (v: number) => void;
   sizeBucket: SizeBucket;
   onSizeBucketChange: (v: SizeBucket) => void;
+  count: number;
+  total: number;
 }
 
 const SIZE_BUCKETS: { value: SizeBucket; label: string }[] = [
@@ -96,6 +98,10 @@ export default function FilterBar(props: Props) {
           ))}
         </div>
       </div>
+
+      <span className={styles.count}>
+        {props.count} / {props.total}
+      </span>
     </div>
   );
 }
