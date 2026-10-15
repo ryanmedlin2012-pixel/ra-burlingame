@@ -90,7 +90,7 @@ NO_VIGNETTE_IDS: set[str] = {
     "2013-08-10-untitled-19-01",
     "2013-08-10-untitled-20-01",
     "201",  # Urine Test — primary swapped to this photo after removing the old instance 1
-    "2013-08-10-untitled-31-01",
+    "203",  # Untitled (superstar specials | malcolm | foot) — was 2013-08-10-untitled-31-01 before primary swap
     "2023-01-20-untitled-24-01",
     "2023-01-20-untitled-25-01",
     "2023-01-20-untitled-26-01",
@@ -130,6 +130,14 @@ PHOTO_VIGNETTE_OVERRIDES: dict[str, tuple[bool, int, int]] = {
     "2013-07-14-untitled-8-01": (False, 0, 0),
     "106": (False, 0, 0),  # Crisco instance 2
     "2011-10-16-untitled-3-01": (True, 90, 40),  # Untitled 31 instance 3
+    "2013-08-10-untitled-15-01": (True, 40, 20),  # Untitled (nature scene) — horizontal only, less spread
+}
+
+# Photo ids whose vignette only fades the left/right edges (top/bottom stay
+# sharp) — rendered as two edge gradients instead of the usual 4-side
+# box-shadow. "all" (the default, not listed here) keeps the normal look.
+PHOTO_VIGNETTE_SIDES: dict[str, str] = {
+    "2013-08-10-untitled-15-01": "horizontal",
 }
 
 # Extra padding (px) inside the image container, so a wide/landscape photo
@@ -149,8 +157,29 @@ IMAGE_PADDING_OVERRIDES: dict[str, int] = {
 PHOTO_PADDING_Y_OVERRIDES: dict[str, int] = {
     "2024-10-29-white-foam-01": 30,
     "2024-10-29-untitled-311-01": 10,
-    "2015-09-17-self-moment-01": 30,
+    "2015-09-17-self-moment-01": 10,
     "2015-09-17-untitled-161-01": 30,
+}
+
+# Grid-ordering date only (the detail page's displayed DATE always stays the
+# real captureDate) — lets two separately-dated but thematically paired
+# pieces sit next to each other in the gallery grid instead of being split
+# apart by their true capture dates.
+SORT_DATE_OVERRIDES: dict[str, str] = {
+    "2011-10-16-new-religion-2-01": "2013-08-03",  # sits next to Untitled (new Religion)
+}
+
+# Corrects the displayed DATE (and grid position) to the piece's actual
+# creation year when it's known to differ from the photo's capture date —
+# unlike SORT_DATE_OVERRIDES, this changes what's shown on the detail page.
+CAPTURE_DATE_OVERRIDES: dict[str, str] = {
+    "2013-08-10-untitled-92-01": "2007",  # Untitled (castle)
+    "2013-08-10-untitled-15-01": "2007",  # Untitled (nature scene)
+    "203": "2013",  # Untitled (superstar specials | malcolm | foot)
+    "210": "2007",  # Untitled (#nails)
+    "021": "2006",  # Untitled (flight)
+    "2013-08-10-fresh-meat-market-01": "2008",  # Untitled (for Dennis Cooper)
+    "2013-08-10-dennis-01": "2005",  # Mary (Matt)
 }
 
 # Forces the image container's background to a specific color instead of
@@ -212,7 +241,8 @@ PIECE_METADATA: dict[str, dict] = {
     },
     "201": {
         "medium": "Collage / assemblage",
-        "physicalSize": "16 × 17 in",
+        "physicalSize": "16 × 19 in",
+        "notes": "Private collection",
     },
     "2023-05-25-chirotic-mileau-01": {
         "medium": "Acrylic and oils on canvas",
@@ -234,6 +264,58 @@ PIECE_METADATA: dict[str, dict] = {
     "2013-08-03-new-religion-11-01": {
         "medium": "Mixed media, collage, resin, dye",
         "physicalSize": "9.75 × 15 in",
+    },
+    "2013-08-03-untitled-11-01": {
+        "medium": "Mixed media, collage, resin, dye",
+    },
+    "2013-08-10-untitled-19-01": {
+        "medium": "Mixed media / collage",
+        "physicalSize": "11.75 × 11.75 in",
+        "shows": "Bay Area Open Studios, Berkeley, CA",
+    },
+    "2013-08-10-untitled-18-01": {
+        "medium": "Mixed media / collage",
+        "physicalSize": "11.57 × 11.75 in",
+        "shows": "Bay Area Open Studios, Berkeley, CA",
+    },
+    "2013-08-10-untitled-20-01": {
+        "medium": "Mixed media / collage",
+        "physicalSize": "11.75 × 11.75 in",
+        "shows": "Bay Area Open Studios, Berkeley, CA",
+    },
+    "2013-08-10-untitled-92-01": {
+        "medium": "Paper collage",
+        "physicalSize": "8 × 10 in",
+    },
+    "2013-08-10-untitled-15-01": {
+        "medium": "Collage",
+        "physicalSize": "9 × 10 in",
+    },
+    "203": {
+        "medium": "Mixed media / collage / resin",
+        "notes": "Available as print, dimensions variable.",
+    },
+    "210": {
+        "medium": "Collage on card",
+        "physicalSize": "4.5 × 5 in",
+        "notes": "Available as digital print",
+    },
+    "021": {
+        "medium": "Collage / assemblage",
+        "physicalSize": "5 × 6 in",
+        "notes": "Available as digital print",
+    },
+    "2013-08-10-fresh-meat-market-01": {
+        "medium": "Collage",
+        "physicalSize": "17 × 16 in",
+    },
+    "2013-08-10-dennis-01": {
+        "medium": "Collage / assemblage",
+        "physicalSize": "11.75 × 14 in",
+    },
+    "2013-07-13-psychic-twinks-1-01": {
+        "medium": "Mixed media, collage, resin",
+        "notes": "No longer exists. Available as digital print (dimensions variable).",
     },
 }
 
@@ -364,7 +446,7 @@ def main():
 
         artwork_id = Path(primary["original_path"]).stem
         title = prettify_title(deliberate_title(primary) or "Untitled")
-        capture_date = primary.get("capture_date") or "0000-00-00"
+        capture_date = CAPTURE_DATE_OVERRIDES.get(artwork_id, primary.get("capture_date") or "0000-00-00")
         year = int(capture_date[:4]) if capture_date[:4].isdigit() else None
         width = int(primary["width"]) if primary.get("width") else None
         height = int(primary["height"]) if primary.get("height") else None
@@ -376,6 +458,7 @@ def main():
         medium = catalog.get("medium", medium)
         physical_size = catalog.get("physicalSize")
         shows = catalog.get("shows")
+        notes = catalog.get("notes")
 
         piece_override = BACKGROUND_OVERRIDES.get(artwork_id)
 
@@ -408,6 +491,7 @@ def main():
                 "vignette": alt_vignette,
                 "vignetteBlur": alt_blur,
                 "vignetteInset": alt_inset,
+                "vignetteSides": PHOTO_VIGNETTE_SIDES.get(alt_id, "all"),
                 "paddingY": PHOTO_PADDING_Y_OVERRIDES.get(alt_id, 0),
             })
 
@@ -416,12 +500,14 @@ def main():
             "title": title,
             "year": year,
             "captureDate": capture_date,
+            "sortDate": SORT_DATE_OVERRIDES.get(artwork_id, capture_date),
             "width": width,
             "height": height,
             "megapixels": megapixels,
             "medium": medium,
             "physicalSize": physical_size,
             "shows": shows,
+            "notes": notes,
             "bodyOfWork": body_of_work,
             "thumb": f"/{thumb_rel}",
             "full": f"/{full_rel}",
@@ -429,13 +515,14 @@ def main():
             "vignette": primary_vignette,
             "vignetteBlur": primary_blur,
             "vignetteInset": primary_inset,
+            "vignetteSides": PHOTO_VIGNETTE_SIDES.get(artwork_id, "all"),
             "imagePadding": IMAGE_PADDING_OVERRIDES.get(artwork_id, DEFAULT_IMAGE_PADDING),
             "fillOverride": fill_override,
             "paddingY": PHOTO_PADDING_Y_OVERRIDES.get(artwork_id, 0),
             "alternates": alt_photos,
         })
 
-    artworks.sort(key=lambda a: a["captureDate"], reverse=True)
+    artworks.sort(key=lambda a: (a["sortDate"], a["title"]), reverse=True)
 
     out_path = repo_root / "src" / "data" / "artworks.json"
     out_path.parent.mkdir(parents=True, exist_ok=True)

@@ -45,6 +45,7 @@ export default function ArtworkDetail() {
       vignette: artwork.vignette,
       vignetteBlur: artwork.vignetteBlur,
       vignetteInset: artwork.vignetteInset,
+      vignetteSides: artwork.vignetteSides,
       paddingY: artwork.paddingY,
     },
     ...artwork.alternates,
@@ -92,7 +93,18 @@ export default function ArtworkDetail() {
             >
               <div className={styles.imageInner}>
                 <img src={shown.src} alt={artwork.title} />
-                {shown.vignette && (
+                {shown.vignette && shown.vignetteSides === 'horizontal' && (
+                  <div
+                    className={styles.imageVignette}
+                    style={{
+                      backgroundImage: `linear-gradient(to right, ${fillColor}, transparent), linear-gradient(to left, ${fillColor}, transparent)`,
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'left, right',
+                      backgroundSize: `${shown.vignetteInset}px 100%, ${shown.vignetteInset}px 100%`,
+                    }}
+                  />
+                )}
+                {shown.vignette && shown.vignetteSides !== 'horizontal' && (
                   <div
                     className={styles.imageVignette}
                     style={{
@@ -128,11 +140,6 @@ export default function ArtworkDetail() {
             <dd>{artwork.title}</dd>
             <dt>DATE</dt>
             <dd>{artwork.captureDate}</dd>
-            <dt>DIMENSIONS</dt>
-            <dd>
-              {artwork.width} × {artwork.height} px
-              {artwork.megapixels != null ? ` (${artwork.megapixels} MP)` : ''}
-            </dd>
             <dt>MEDIUM</dt>
             <dd>{artwork.medium ?? '—'}</dd>
             {artwork.physicalSize && (
@@ -145,6 +152,12 @@ export default function ArtworkDetail() {
               <>
                 <dt>SHOWS</dt>
                 <dd>{artwork.shows}</dd>
+              </>
+            )}
+            {artwork.notes && (
+              <>
+                <dt>NOTES</dt>
+                <dd>{artwork.notes}</dd>
               </>
             )}
             {artwork.bodyOfWork && (

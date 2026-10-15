@@ -8,6 +8,7 @@ export interface AlternatePhoto {
   vignette: boolean;
   vignetteBlur: number;
   vignetteInset: number;
+  vignetteSides: 'all' | 'horizontal';
   paddingY: number;
 }
 
@@ -16,12 +17,14 @@ export interface Artwork {
   title: string;
   year: number | null;
   captureDate: string;
+  sortDate: string;
   width: number | null;
   height: number | null;
   megapixels: number | null;
   medium: string | null;
   physicalSize: string | null;
   shows: string | null;
+  notes: string | null;
   bodyOfWork: string | null;
   thumb: string;
   full: string;
@@ -29,6 +32,7 @@ export interface Artwork {
   vignette: boolean;
   vignetteBlur: number;
   vignetteInset: number;
+  vignetteSides: 'all' | 'horizontal';
   imagePadding: number;
   fillOverride: string | null;
   paddingY: number;
@@ -71,8 +75,8 @@ export function useArtworks() {
     });
     return [...list].sort((a, b) => {
       if (sortKey === 'title-asc') return a.title.localeCompare(b.title);
-      if (sortKey === 'date-asc') return a.captureDate.localeCompare(b.captureDate);
-      return b.captureDate.localeCompare(a.captureDate);
+      if (sortKey === 'date-asc') return a.sortDate.localeCompare(b.sortDate) || a.title.localeCompare(b.title);
+      return b.sortDate.localeCompare(a.sortDate) || a.title.localeCompare(b.title);
     });
   }, [search, sortKey, yearMin, yearMax, sizeBucket]);
 
