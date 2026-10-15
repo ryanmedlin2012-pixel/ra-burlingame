@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useArtworks, YEAR_MAX, YEAR_MIN } from '../hooks/useArtworks';
 import Nav from '../components/Nav';
 import FilterBar from '../components/FilterBar';
@@ -19,6 +20,7 @@ export default function Gallery() {
     sizeBucket,
     setSizeBucket,
   } = useArtworks();
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   return (
     <div>
@@ -26,25 +28,36 @@ export default function Gallery() {
       <div className={styles.page}>
         <header className={styles.header}>
           <h1 className={styles.title}>WORK</h1>
-          <span className={styles.count}>
-            {artworks.length} / {total}
-          </span>
+          <div className={styles.headerRight}>
+            <span className={styles.count}>
+              {artworks.length} / {total}
+            </span>
+            <button
+              type="button"
+              className={styles.filterToggle}
+              onClick={() => setFiltersOpen((v) => !v)}
+            >
+              {filtersOpen ? 'HIDE FILTERS' : 'FILTERS'}
+            </button>
+          </div>
         </header>
 
-        <FilterBar
-          search={search}
-          onSearchChange={setSearch}
-          sortKey={sortKey}
-          onSortChange={setSortKey}
-          yearMin={yearMin}
-          yearMax={yearMax}
-          yearBoundMin={YEAR_MIN}
-          yearBoundMax={YEAR_MAX}
-          onYearMinChange={setYearMin}
-          onYearMaxChange={setYearMax}
-          sizeBucket={sizeBucket}
-          onSizeBucketChange={setSizeBucket}
-        />
+        <div className={`${styles.filterWrap} ${filtersOpen ? '' : styles.filterWrapCollapsed}`}>
+          <FilterBar
+            search={search}
+            onSearchChange={setSearch}
+            sortKey={sortKey}
+            onSortChange={setSortKey}
+            yearMin={yearMin}
+            yearMax={yearMax}
+            yearBoundMin={YEAR_MIN}
+            yearBoundMax={YEAR_MAX}
+            onYearMinChange={setYearMin}
+            onYearMaxChange={setYearMax}
+            sizeBucket={sizeBucket}
+            onSizeBucketChange={setSizeBucket}
+          />
+        </div>
 
         <GalleryGrid artworks={artworks} />
       </div>

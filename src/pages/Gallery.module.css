@@ -20,7 +20,39 @@
   margin: 0;
 }
 
+.headerRight {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
 .count {
   font-size: var(--text-xs);
   color: var(--color-muted);
+}
+
+.filterToggle {
+  display: none;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  cursor: pointer;
+}
+
+.filterToggle:hover {
+  border-color: var(--color-fg);
+}
+
+/* Tablet and mobile — filters are tucked behind the toggle above */
+@media (max-width: 1024px) {
+  .filterToggle {
+    display: inline-block;
+  }
+
+  .filterWrapCollapsed {
+    display: none;
+  }
 }
