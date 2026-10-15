@@ -180,6 +180,12 @@ CAPTURE_DATE_OVERRIDES: dict[str, str] = {
     "021": "2006",  # Untitled (flight)
     "2013-08-10-fresh-meat-market-01": "2008",  # Untitled (for Dennis Cooper)
     "2013-08-10-dennis-01": "2005",  # Mary (Matt)
+    "2023-01-20-untitled-22-01": "2021",  # Untitled (enforcement)
+    "2023-01-20-untitled-26-01": "2022",  # Untitled (blue chair)
+    "2024-10-29-untitled-301-01": "2022",  # Untitled (shield / suds)
+    "2024-10-29-untitled-33-01": "2021",  # Untitled (Chirotic milieu)
+    "2013-10-05-untitled-141-01": "2014",  # Untitled (heaven / swiffer)
+    "2023-01-24-untitled-27-01": "2021",  # Untitled (sentiment)
 }
 
 # Forces the image container's background to a specific color instead of
@@ -312,6 +318,34 @@ PIECE_METADATA: dict[str, dict] = {
     "2013-08-10-dennis-01": {
         "medium": "Collage / assemblage",
         "physicalSize": "11.75 × 14 in",
+    },
+    "2023-01-20-untitled-22-01": {
+        "medium": "Oils and acrylic on canvas",
+        "physicalSize": "24 × 12 in",
+    },
+    "2023-01-20-untitled-26-01": {
+        "medium": "Oils and acrylics on raw unstretched canvas",
+        "physicalSize": "15.5 × 14.5 in",
+    },
+    "2024-10-29-untitled-301-01": {
+        "medium": "Oils and acrylics on stretched raw canvas",
+        "physicalSize": "45 × 42.5 in",
+    },
+    "2024-10-29-untitled-33-01": {
+        "medium": "Oils and acrylic on canvas",
+        "physicalSize": "24 × 12 in",
+    },
+    "2013-10-05-untitled-141-01": {
+        "medium": "Mixed media / collage",
+        "physicalSize": "21.5 × 14 in",
+    },
+    "2023-01-24-untitled-27-01": {
+        "medium": "Acrylic and oils on raw canvas",
+        "physicalSize": "16 × 16 in",
+    },
+    "2024-10-29-untitled-32-01": {
+        "medium": "Acrylic spray paint and oils on canvas (stretched)",
+        "physicalSize": "54 × 68 in",
     },
     "2013-07-13-psychic-twinks-1-01": {
         "medium": "Mixed media, collage, resin",
