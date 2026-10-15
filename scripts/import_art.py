@@ -186,6 +186,7 @@ CAPTURE_DATE_OVERRIDES: dict[str, str] = {
     "2024-10-29-untitled-33-01": "2021",  # Untitled (Chirotic milieu)
     "2013-10-05-untitled-141-01": "2014",  # Untitled (heaven / swiffer)
     "2023-01-24-untitled-27-01": "2021",  # Untitled (sentiment)
+    "011": "2012",  # Untitled (autophagy)
 }
 
 # Forces the image container's background to a specific color instead of
@@ -346,6 +347,19 @@ PIECE_METADATA: dict[str, dict] = {
     "2024-10-29-untitled-32-01": {
         "medium": "Acrylic spray paint and oils on canvas (stretched)",
         "physicalSize": "54 × 68 in",
+    },
+    "011": {
+        "medium": "Collage",
+        "physicalSize": "11.25 × 11.25 in",
+        "notes": "Private collection",
+    },
+    "2023-01-20-untitled-25-01": {
+        "medium": "Acrylic and oils on raw canvas (unstretched)",
+        "physicalSize": "24 × 12 in",
+    },
+    "2026-03-23-aloe-01": {
+        "medium": "Oil and acrylic on canvas",
+        "physicalSize": "12 × 19 in",
     },
     "2013-07-13-psychic-twinks-1-01": {
         "medium": "Mixed media, collage, resin",
