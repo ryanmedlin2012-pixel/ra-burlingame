@@ -72,6 +72,7 @@ INCLUDABLE_COLLECTIONS: set[str] = set()
 NO_VIGNETTE_IDS: set[str] = {
     "2026-03-23-atck-01",
     "2026-03-23-lunar-01",
+    "2011-10-16-new-religion-2-01",
     "2025-02-27-dark-mountain-01",
     "2024-10-29-untitled-33-01",
     "2024-10-29-magic-mountain-01",
@@ -98,7 +99,7 @@ NO_VIGNETTE_IDS: set[str] = {
     "2023-01-20-untitled-26-01",
     "2013-08-03-new-religion-11-01",
     "2013-08-03-untitled-13-01",
-    "2015-09-17-untitled-161-01",
+    "2023-01-24-untitled-62-01",  # Untitled (nite rainbow) — was 2015-09-17-untitled-161-01 before primary swap
     "2013-10-05-untitled-61-01",
     "2013-10-05-untitled-141-01",
     "2013-08-10-untitled-92-01",
@@ -164,7 +165,6 @@ PHOTO_PADDING_Y_OVERRIDES: dict[str, int] = {
     "2024-10-29-white-foam-01": 30,
     "2024-10-29-untitled-311-01": 10,
     "2015-09-17-self-moment-01": 10,
-    "2015-09-17-untitled-161-01": 30,
 }
 
 # Grid-ordering date only (the detail page's displayed DATE always stays the
@@ -193,6 +193,8 @@ CAPTURE_DATE_OVERRIDES: dict[str, str] = {
     "2013-10-05-untitled-141-01": "2014",  # Untitled (heaven / swiffer)
     "2023-01-24-untitled-27-01": "2021",  # Untitled (sentiment)
     "011": "2012",  # Untitled (autophagy)
+    "2023-01-24-untitled-62-01": "2020",  # Untitled (nite rainbow)
+    "2013-07-14-untitled-8-01": "2006",  # Untitled (fresh meat market)
 }
 
 # Forces the image container's background to a specific color instead of
@@ -321,6 +323,49 @@ PIECE_METADATA: dict[str, dict] = {
         "medium": "Oil on canvas",
         "physicalSize": "24 × 12 in",
     },
+    "2023-01-24-untitled-62-01": {
+        "medium": "Mixed media",
+        "physicalSize": "24 × 24 in",
+    },
+    "2013-10-05-untitled-61-01": {
+        "medium": "Cut paper / collage",
+        "physicalSize": "19 × 14 in",
+        "notes": "No longer exists, available as digital print, dimensions variable.",
+    },
+    "2013-07-14-untitled-8-01": {
+        "medium": "Paper collage",
+        "physicalSize": "19 × 16 in",
+        "notes": "No longer exists, available as digital print, dimensions variable.",
+    },
+    "2013-07-14-untitled-10-01": {
+        "medium": "Found object",
+        "notes": "Available as digital print, dimensions variable.",
+    },
+    "2013-07-13-helen-anne-01": {
+        "medium": "Found objects",
+        "notes": "Available as digital print, dimensions variable.",
+    },
+    "2026-03-23-atck-01": {
+        "medium": "Oils and acrylics on canvas",
+        "physicalSize": "16 × 12 in",
+    },
+    "2026-03-23-lunar-01": {
+        "medium": "Collage",
+        "physicalSize": "10 × 12 in",
+    },
+    "2013-08-10-untitled-91-01": {
+        "medium": "Found objects / assemblage",
+        "physicalSize": "24 × 12 in",
+        "notes": "Available as digital print, dimensions variable.",
+    },
+    "2011-10-16-new-religion-2-01": {
+        "medium": "Mixed media, collage, resin, dye",
+        "physicalSize": "9.75 × 15 in",
+    },
+    "2026-03-23-temperance-guild-01": {
+        "medium": "Oil and acrylics on canvas",
+        "physicalSize": "20 × 20 in",
+    },
     "2024-10-29-blue-sunshine-05": {
         "medium": "Oil and acrylics on raw canvas",
         "physicalSize": "20 × 20 in",
@@ -338,6 +383,7 @@ PIECE_METADATA: dict[str, dict] = {
     "2023-05-25-chirotic-mileau-01": {
         "medium": "Acrylic and oils on canvas",
         "physicalSize": "20 × 20 in",
+        "notes": "Private collection",
     },
     "2015-09-17-crisco-01": {
         "medium": "Mixed media, collage, resin",
@@ -349,7 +395,7 @@ PIECE_METADATA: dict[str, dict] = {
         "shows": "Mount Analogue: The Door to the Invisible Must Be Made Visible — Seattle",
     },
     "2013-08-10-gene-01": {
-        "medium": "Collage / digital print",
+        "medium": "Collage / digital print (matted and framed)",
         "physicalSize": "16.5 × 20.5 in",
     },
     "2013-08-03-new-religion-11-01": {
