@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getArtworkById, getNextArtworkId } from '../hooks/useArtworks';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { artworks, filterAndSortArtworks, getArtworkById, getNextArtworkId, parseFilterQuery } from '../hooks/useArtworks';
 import Nav from '../components/Nav';
 import styles from './ArtworkDetail.module.css';
 
@@ -10,6 +10,14 @@ export default function ArtworkDetail() {
   const [activeIndex, setActiveIndex] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  // Reconstructs the grid's filter/sort view from the URL (carried along
+  // from the card that was clicked) so NEXT follows that same order
+  // instead of always the grid's default date-desc view.
+  const orderedList = useMemo(
+    () => filterAndSortArtworks(artworks, parseFilterQuery(searchParams)),
+    [searchParams],
+  );
   // location.key is 'default' only for the very first history entry (no
   // in-app navigation happened yet, e.g. a piece page opened directly) —
   // real browser back only makes sense once there's somewhere to go back to.
@@ -51,7 +59,7 @@ export default function ArtworkDetail() {
     ...artwork.alternates,
   ];
   const shown = allPhotos[activeIndex] ?? allPhotos[0];
-  const nextId = getNextArtworkId(artwork.id);
+  const nextId = getNextArtworkId(artwork.id, orderedList);
   // An explicit override always wins (set per-photo or per-piece at build
   // time); otherwise only show the sampled color while the vignette is on —
   // with it off and no override, the plain CSS default is intentional.
@@ -75,7 +83,7 @@ export default function ArtworkDetail() {
               ← BACK
             </button>
             {nextId && (
-              <Link to={`/piece/${nextId}`} className={styles.next}>
+              <Link to={`/piece/${nextId}${location.search}`} className={styles.next}>
                 NEXT →
               </Link>
             )}

@@ -88,6 +88,8 @@ NO_VIGNETTE_IDS: set[str] = {
     "2013-08-10-dennis-01",
     "2013-08-10-gene-01",
     "2013-08-10-untitled-19-01",
+    "2025-02-27-see-you-01",
+    "2025-02-27-see-you-02",
     "2013-08-10-untitled-20-01",
     "201",  # Urine Test — primary swapped to this photo after removing the old instance 1
     "203",  # Untitled (superstar specials | malcolm | foot) — was 2013-08-10-untitled-31-01 before primary swap
@@ -131,6 +133,8 @@ PHOTO_VIGNETTE_OVERRIDES: dict[str, tuple[bool, int, int]] = {
     "106": (False, 0, 0),  # Crisco instance 2
     "2011-10-16-untitled-3-01": (True, 90, 40),  # Untitled 31 instance 3
     "2013-08-10-untitled-15-01": (True, 40, 20),  # Untitled (nature scene) — horizontal only, less spread
+    "2025-02-27-see-you-01": (True, 30, 10),  # Untitled (see you) — small, horizontal only
+    "2025-02-27-see-you-02": (True, 30, 10),  # Untitled (see you) II — small, horizontal only
 }
 
 # Photo ids whose vignette only fades the left/right edges (top/bottom stay
@@ -138,6 +142,8 @@ PHOTO_VIGNETTE_OVERRIDES: dict[str, tuple[bool, int, int]] = {
 # box-shadow. "all" (the default, not listed here) keeps the normal look.
 PHOTO_VIGNETTE_SIDES: dict[str, str] = {
     "2013-08-10-untitled-15-01": "horizontal",
+    "2025-02-27-see-you-01": "horizontal",
+    "2025-02-27-see-you-02": "horizontal",
 }
 
 # Extra padding (px) inside the image container, so a wide/landscape photo
@@ -231,6 +237,9 @@ CARD_OBJECT_FIT_OVERRIDES: dict[str, str] = {
     "2013-08-10-untitled-91-01": "cover",  # Untitled 91
     "2013-08-10-untitled-51-01": "cover",  # Untitled 51
     "2023-01-20-untitled-23-01": "cover",  # Untitled 23
+    "2023-01-20-untitled-25-01": "cover",  # Untitled (embrace)
+    "2023-01-20-untitled-26-01": "cover",  # Untitled (blue chair)
+    "2024-10-29-untitled-32-01": "cover",  # Untitled (haunted house)
 }
 
 # Scales a card's thumbnail up beyond 100% (combined with object-fit: cover)
@@ -240,7 +249,13 @@ CARD_ZOOM_OVERRIDES: dict[str, float] = {
     "2013-07-13-psychic-twinks-1-01": 2.2,
     "2013-07-14-untitled-10-01": 2.2,
     "2013-08-10-untitled-51-01": 2.2,
-    "2023-01-20-untitled-23-01": 2.2,
+    "2023-01-20-untitled-25-01": 1.6,
+    "2023-01-20-untitled-26-01": 1.6,
+    "2015-09-17-crisco-01": 0.8,  # shrink inward so whitespace shows on all 4 sides
+    "2023-01-20-untitled-21-01": 0.8,  # zoom out / shrink inward
+    "2023-01-20-untitled-24-01": 0.8,  # zoom out / shrink inward
+    "2023-01-20-untitled-22-01": 0.8,  # zoom out / shrink inward
+    "2024-10-29-untitled-32-01": 2.2,  # zoom in
 }
 
 # Pre-crops a dedicated card thumbnail to just one region of the photo
@@ -250,6 +265,7 @@ CARD_ZOOM_OVERRIDES: dict[str, float] = {
 CARD_CROP_OVERRIDES: dict[str, tuple[int, int, int, int]] = {
     "2013-07-13-helen-anne-01": (90, 100, 596, 598),  # just the Helen Reddy sleeve
     "2013-08-10-untitled-91-01": (223, 260, 1527, 1940),  # just the bust/poster panel, zoomed in
+    "2023-01-20-untitled-23-01": (6, 6, 494, 500),  # just the left (curved shape) panel
 }
 
 CARD_BACKGROUND_OVERRIDES: dict[str, str] = {
@@ -259,6 +275,7 @@ CARD_BACKGROUND_OVERRIDES: dict[str, str] = {
     "2023-01-20-untitled-22-01": "#ffffff",  # Untitled (enforcement)
     "2013-08-10-fresh-meat-market-01": "#f2f2f2",  # Untitled (for Dennis Cooper) — back to plain default
     "2015-09-17-crisco-01": "#f2f2f2",  # Crisco — back to plain default
+    "2023-01-20-untitled-24-01": "#ffffff",  # Untitled 24
 }
 
 # Catalog data for pieces matched against ~/Documents/art/art_inventory.pdf
@@ -275,8 +292,34 @@ PIECE_METADATA: dict[str, dict] = {
         "physicalSize": "26 × 16 in",
     },
     "2025-02-27-see-you-01": {
-        "medium": "Mixed media",
+        "medium": "Resin, skirt, dye, sequins on wood panel",
         "physicalSize": "8.5 × 10 in",
+    },
+    "2025-02-27-see-you-02": {
+        "medium": "Resin, skirt, dye, sequins on wood panel",
+        "physicalSize": "8.5 × 10 in",
+    },
+    "2024-10-29-untitled-31-01": {
+        "medium": "Mixed media on raw canvas",
+        "physicalSize": "60 × 72 in",
+        "shows": "Van der Plas Gallery, NYC — October 2025",
+    },
+    "2023-01-24-untitled-28-01": {
+        "medium": "Oil and acrylic on canvas",
+        "physicalSize": "16 × 16 in",
+    },
+    "2023-01-24-untitled-30-01": {
+        "medium": "Oil and acrylics on raw canvas",
+        "physicalSize": "48 × 60 in",
+        "notes": "No longer exists, available as digital print, dimensions variable.",
+    },
+    "2023-01-20-untitled-21-01": {
+        "medium": "Oil on canvas",
+        "physicalSize": "24 × 12 in",
+    },
+    "2023-01-20-untitled-23-01": {
+        "medium": "Oil on canvas",
+        "physicalSize": "24 × 12 in",
     },
     "2024-10-29-blue-sunshine-05": {
         "medium": "Oil and acrylics on raw canvas",

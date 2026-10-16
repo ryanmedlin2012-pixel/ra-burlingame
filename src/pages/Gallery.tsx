@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useArtworks, YEAR_MAX, YEAR_MIN } from '../hooks/useArtworks';
+import { buildFilterQuery, useArtworks, YEAR_MAX, YEAR_MIN } from '../hooks/useArtworks';
 import Nav from '../components/Nav';
 import FilterBar from '../components/FilterBar';
 import GalleryGrid from '../components/GalleryGrid';
@@ -21,6 +21,7 @@ export default function Gallery() {
     setSizeBucket,
   } = useArtworks();
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const linkQuery = buildFilterQuery({ search, sortKey, yearMin, yearMax, sizeBucket });
 
   return (
     <div>
@@ -58,7 +59,7 @@ export default function Gallery() {
           />
         </div>
 
-        <GalleryGrid artworks={artworks} />
+        <GalleryGrid artworks={artworks} linkQuery={linkQuery} />
       </div>
     </div>
   );
