@@ -1,4 +1,5 @@
 import Nav from '../components/Nav';
+import Footer from '../components/Footer';
 import styles from './Home.module.css';
 
 export default function Home() {
@@ -8,6 +9,7 @@ export default function Home() {
       <div className={styles.hero}>
         <img src="/images/splash.jpg" alt="" className={styles.heroImage} />
       </div>
+      <Footer />
     </div>
   );
 }

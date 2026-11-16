@@ -3,6 +3,7 @@ import { buildFilterQuery, useArtworks, YEAR_MAX, YEAR_MIN } from '../hooks/useA
 import Nav from '../components/Nav';
 import FilterBar from '../components/FilterBar';
 import GalleryGrid from '../components/GalleryGrid';
+import Footer from '../components/Footer';
 import styles from './Gallery.module.css';
 
 export default function Gallery() {
@@ -61,6 +62,7 @@ export default function Gallery() {
 
         <GalleryGrid artworks={artworks} linkQuery={linkQuery} />
       </div>
+      <Footer />
     </div>
   );
 }

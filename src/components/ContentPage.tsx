@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import Nav from './Nav';
+import Footer from './Footer';
 import styles from './ContentPage.module.css';
 
 export default function ContentPage({ title, children }: { title: string; children: ReactNode }) {
@@ -10,6 +11,7 @@ export default function ContentPage({ title, children }: { title: string; childr
         <h1 className={styles.title}>{title}</h1>
         {children}
       </main>
+      <Footer />
     </div>
   );
 }

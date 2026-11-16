@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { artworks, filterAndSortArtworks, getArtworkById, getNextArtworkId, parseFilterQuery } from '../hooks/useArtworks';
 import Nav from '../components/Nav';
+import Footer from '../components/Footer';
 import styles from './ArtworkDetail.module.css';
 
 export default function ArtworkDetail() {
@@ -41,6 +42,7 @@ export default function ArtworkDetail() {
           </button>
           <p>NOT FOUND</p>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -177,6 +179,7 @@ export default function ArtworkDetail() {
           </dl>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
