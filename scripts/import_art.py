@@ -48,7 +48,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageChops, ImageFilter, ImageOps
 
 THUMB_LONG_EDGE = 480
 THUMB_QUALITY = 72
@@ -553,11 +553,92 @@ def corner_background_color(img: Image.Image) -> str:
     return f"#{r:02x}{g:02x}{b:02x}"
 
 
-def save_derivative(src_path: Path, dest_path: Path, long_edge: int, quality: int) -> str:
+# Crop every photo to the artwork's own edges (per gallery feedback that
+# photos of 2D work should run right up to the painting) instead of showing
+# the studio wall around it. While this is on, the wall-blending treatments
+# (vignettes, fill overrides, matching negative space, card zooms) are
+# neutralized — their data stays above so flipping this back restores them.
+CROP_TO_ART = True
+
+# Photos detect_art_bbox gets wrong: a pixel box (left, top, right, bottom,
+# in the exif-corrected original) to use instead, or None to leave the
+# photo uncropped.
+ART_CROP_OVERRIDES: dict[str, tuple[int, int, int, int] | None] = {
+    "2": None,  # superstar specials alt — detector cropped to a white sliver
+}
+
+
+def detect_art_bbox(src_path: Path) -> tuple[int, int, int, int] | None:
+    """Bounding box of the artwork against a near-uniform studio backdrop,
+    in the exif-corrected image's pixel coordinates. Samples the backdrop
+    color from the corners, masks everything that differs from it, and
+    takes that mask's bounding box. Returns None when detection looks
+    unreliable (no uniform backdrop, or an implausibly small box)."""
+    with Image.open(src_path) as src:
+        img = ImageOps.exif_transpose(src).convert("RGB")
+        w, h = img.size
+        scale = 900 / max(w, h)
+        det = (
+            img.resize((max(1, round(w * scale)), max(1, round(h * scale))))
+            if scale < 1
+            else img.copy()
+        )
+    dw, dh = det.size
+    patch = max(4, min(dw, dh) // 20)
+    corner_px = []
+    for box in [(0, 0, patch, patch), (dw - patch, 0, dw, patch), (0, dh - patch, patch, dh), (dw - patch, dh - patch, dw, dh)]:
+        corner_px.extend(det.crop(box).getdata())
+    corner_px.sort(key=sum)
+    bg = corner_px[len(corner_px) // 2]
+
+    # A pixel is backdrop if it's close to the wall color, OR it's a cast
+    # shadow: an even (neutral) darkening of the wall color that isn't dark
+    # enough to be paint. MinFilter kills dust specks on the backdrop that
+    # would otherwise blow the box wide open.
+    bg_r, bg_g, bg_b = bg
+    mask = Image.new("L", det.size, 0)
+    mask_px = []
+    for pr, pg, pb in det.getdata():
+        dr, dg, db = bg_r - pr, bg_g - pg, bg_b - pb
+        near = max(abs(dr), abs(dg), abs(db)) <= 46
+        shadow = min(dr, dg, db) > 0 and max(dr, dg, db) <= 110 and (max(dr, dg, db) - min(dr, dg, db)) <= 22
+        mask_px.append(0 if (near or shadow) else 255)
+    mask.putdata(mask_px)
+    mask = mask.filter(ImageFilter.MinFilter(3))
+    bbox = mask.getbbox()
+    if not bbox:
+        return None
+    margin = 2  # give back what the erosion shaved off the mask's edge
+    l, t, rr, bb = bbox
+    sx, sy = w / dw, h / dh
+    box = (
+        max(0, int((l - margin) * sx)),
+        max(0, int((t - margin) * sy)),
+        min(w, int((rr + margin) * sx) + 1),
+        min(h, int((bb + margin) * sy) + 1),
+    )
+    if (box[2] - box[0]) < w * 0.2 or (box[3] - box[1]) < h * 0.2:
+        return None
+    return box
+
+
+def art_crop_for(src_path: Path, photo_id: str) -> tuple[int, int, int, int] | None:
+    if not CROP_TO_ART:
+        return None
+    if photo_id in ART_CROP_OVERRIDES:
+        return ART_CROP_OVERRIDES[photo_id]
+    return detect_art_bbox(src_path)
+
+
+def save_derivative(
+    src_path: Path, dest_path: Path, long_edge: int, quality: int, crop_box: tuple[int, int, int, int] | None = None
+) -> str:
     """Saves the resized derivative and returns its estimated background color."""
     with Image.open(src_path) as img:
         img = ImageOps.exif_transpose(img)
         img = img.convert("RGB")
+        if crop_box:
+            img = img.crop(crop_box)
         ratio = long_edge / max(img.width, img.height)
         if ratio < 1:
             img = img.resize((max(1, round(img.width * ratio)), max(1, round(img.height * ratio))))
@@ -656,9 +737,11 @@ def main():
 
         thumb_rel = f"images/thumb/{artwork_id}.jpg"
         full_rel = f"images/full/{artwork_id}.jpg"
-        save_derivative(Path(primary["original_path"]), repo_root / "public" / thumb_rel, THUMB_LONG_EDGE, THUMB_QUALITY)
+        primary_path = Path(primary["original_path"])
+        primary_crop = art_crop_for(primary_path, artwork_id)
+        save_derivative(primary_path, repo_root / "public" / thumb_rel, THUMB_LONG_EDGE, THUMB_QUALITY, primary_crop)
         background_color = save_derivative(
-            Path(primary["original_path"]), repo_root / "public" / full_rel, FULL_LONG_EDGE, FULL_QUALITY
+            primary_path, repo_root / "public" / full_rel, FULL_LONG_EDGE, FULL_QUALITY, primary_crop
         )
 
         card_thumb_rel = None
@@ -671,8 +754,11 @@ def main():
         # fillOverride is the color to force-display (piece-level wins if both
         # are set); None means "no explicit override, use backgroundColor only
         # while vignette is on" — see ArtworkDetail.tsx.
-        fill_override = piece_override or PHOTO_BACKGROUND_OVERRIDES.get(artwork_id)
-        primary_vignette, primary_blur, primary_inset = compute_vignette(artwork_id, artwork_id)
+        fill_override = None if CROP_TO_ART else (piece_override or PHOTO_BACKGROUND_OVERRIDES.get(artwork_id))
+        if CROP_TO_ART:
+            primary_vignette, primary_blur, primary_inset = False, 0, 0
+        else:
+            primary_vignette, primary_blur, primary_inset = compute_vignette(artwork_id, artwork_id)
 
         alt_photos = []
         for alt in alternates:
@@ -681,9 +767,13 @@ def main():
                 continue
             alt_id = alt_src.stem
             alt_rel = f"images/alt/{alt_id}.jpg"
-            alt_bg = save_derivative(alt_src, repo_root / "public" / alt_rel, FULL_LONG_EDGE, FULL_QUALITY)
-            alt_fill_override = piece_override or PHOTO_BACKGROUND_OVERRIDES.get(alt_id)
-            alt_vignette, alt_blur, alt_inset = compute_vignette(alt_id, artwork_id)
+            alt_crop = art_crop_for(alt_src, alt_id)
+            alt_bg = save_derivative(alt_src, repo_root / "public" / alt_rel, FULL_LONG_EDGE, FULL_QUALITY, alt_crop)
+            alt_fill_override = None if CROP_TO_ART else (piece_override or PHOTO_BACKGROUND_OVERRIDES.get(alt_id))
+            if CROP_TO_ART:
+                alt_vignette, alt_blur, alt_inset = False, 0, 0
+            else:
+                alt_vignette, alt_blur, alt_inset = compute_vignette(alt_id, artwork_id)
             alt_photos.append({
                 "src": f"/{alt_rel}",
                 "backgroundColor": alt_bg,
@@ -692,7 +782,7 @@ def main():
                 "vignetteBlur": alt_blur,
                 "vignetteInset": alt_inset,
                 "vignetteSides": PHOTO_VIGNETTE_SIDES.get(alt_id, "all"),
-                "paddingY": PHOTO_PADDING_Y_OVERRIDES.get(alt_id, 0),
+                "paddingY": 0 if CROP_TO_ART else PHOTO_PADDING_Y_OVERRIDES.get(alt_id, 0),
             })
 
         artworks.append({
@@ -717,12 +807,12 @@ def main():
             "vignetteBlur": primary_blur,
             "vignetteInset": primary_inset,
             "vignetteSides": PHOTO_VIGNETTE_SIDES.get(artwork_id, "all"),
-            "imagePadding": IMAGE_PADDING_OVERRIDES.get(artwork_id, DEFAULT_IMAGE_PADDING),
+            "imagePadding": 0 if CROP_TO_ART else IMAGE_PADDING_OVERRIDES.get(artwork_id, DEFAULT_IMAGE_PADDING),
             "fillOverride": fill_override,
-            "cardBackground": CARD_BACKGROUND_OVERRIDES.get(artwork_id),
-            "cardObjectFit": CARD_OBJECT_FIT_OVERRIDES.get(artwork_id, "contain"),
-            "cardZoom": CARD_ZOOM_OVERRIDES.get(artwork_id, 1),
-            "paddingY": PHOTO_PADDING_Y_OVERRIDES.get(artwork_id, 0),
+            "cardBackground": "transparent" if CROP_TO_ART else CARD_BACKGROUND_OVERRIDES.get(artwork_id),
+            "cardObjectFit": "cover" if CROP_TO_ART else CARD_OBJECT_FIT_OVERRIDES.get(artwork_id, "contain"),
+            "cardZoom": 1 if CROP_TO_ART else CARD_ZOOM_OVERRIDES.get(artwork_id, 1),
+            "paddingY": 0 if CROP_TO_ART else PHOTO_PADDING_Y_OVERRIDES.get(artwork_id, 0),
             "alternates": alt_photos,
         })
 

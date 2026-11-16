@@ -82,12 +82,10 @@
 }
 
 .image {
-  border: 1px solid var(--color-border);
   margin-bottom: var(--space-4);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f2f2f2;
 }
 
 .image img {
@@ -131,7 +129,7 @@
   height: 64px;
   padding: 0;
   border: 1px solid var(--color-border);
-  background: #f2f2f2;
+  background: none;
   cursor: pointer;
 }
 
