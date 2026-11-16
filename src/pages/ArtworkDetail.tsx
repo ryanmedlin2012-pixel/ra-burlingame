@@ -34,7 +34,7 @@ export default function ArtworkDetail() {
 
   if (!artwork) {
     return (
-      <div>
+      <div className={styles.root}>
         <Nav />
         <div className={styles.wrap}>
           <button type="button" onClick={goBack} className={styles.back}>
@@ -76,7 +76,7 @@ export default function ArtworkDetail() {
       : undefined;
 
   return (
-    <div>
+    <div className={styles.root}>
       <Nav />
       <div className={styles.wrap}>
         <div className={styles.topRow}>

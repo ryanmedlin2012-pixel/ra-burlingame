@@ -1,11 +1,15 @@
 .page {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .content {
+  flex: 1;
   max-width: 640px;
   margin: 0 auto;
   padding: var(--space-8) var(--space-4);
+  width: 100%;
 }
 
 .title {

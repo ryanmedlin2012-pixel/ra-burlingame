@@ -25,7 +25,7 @@ export default function Gallery() {
   const linkQuery = buildFilterQuery({ search, sortKey, yearMin, yearMax, sizeBucket });
 
   return (
-    <div>
+    <div className={styles.root}>
       <Nav />
       <div className={styles.page}>
         <div className={styles.header}>
