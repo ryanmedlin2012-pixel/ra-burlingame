@@ -565,6 +565,7 @@ CROP_TO_ART = True
 # photo uncropped.
 ART_CROP_OVERRIDES: dict[str, tuple[int, int, int, int] | None] = {
     "2": None,  # superstar specials alt — detector cropped to a white sliver
+    "2026-03-23-atck-01": (488, 488, 9494, 7648),  # trim bottom drop shadow
 }
 
 
