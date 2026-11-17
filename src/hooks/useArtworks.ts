@@ -26,6 +26,7 @@ export interface Artwork {
   shows: string | null;
   notes: string | null;
   bodyOfWork: string | null;
+  series: string[];
   thumb: string;
   cardThumb: string | null;
   full: string;
@@ -48,6 +49,16 @@ export const artworks = artworksData as Artwork[];
 export type SortKey = 'date-desc' | 'date-asc' | 'title-asc';
 export type SizeBucket = 'all' | 'small' | 'medium' | 'large';
 
+// Keep in sync with SERIES_TAGS in scripts/import_art.py.
+export const SERIES = [
+  'Psychological landscape',
+  'Resin',
+  'Collage / assemblage',
+  'Curtains',
+  'Sex',
+  'Haunted space',
+];
+
 const knownYears = artworks
   .map((a) => a.year)
   .filter((y): y is number => y != null);
@@ -68,6 +79,7 @@ export interface FilterParams {
   yearMin: number;
   yearMax: number;
   sizeBucket: SizeBucket;
+  series: string; // 'all' or one SERIES name
 }
 
 /** Pure filter+sort, shared by the grid (live state) and the piece page
@@ -78,6 +90,7 @@ export function filterAndSortArtworks(list: Artwork[], params: FilterParams): Ar
   const filtered = list.filter((a) => {
     if (a.year != null && (a.year < params.yearMin || a.year > params.yearMax)) return false;
     if (!inSizeBucket(a.megapixels, params.sizeBucket)) return false;
+    if (params.series !== 'all' && !a.series.includes(params.series)) return false;
     if (q && !a.title.toLowerCase().includes(q)) return false;
     return true;
   });
@@ -94,6 +107,7 @@ const DEFAULT_FILTER_PARAMS: FilterParams = {
   yearMin: YEAR_MIN,
   yearMax: YEAR_MAX,
   sizeBucket: 'all',
+  series: 'all',
 };
 
 /** Query string carrying the grid's current filter/sort state, appended to
@@ -106,6 +120,7 @@ export function buildFilterQuery(params: FilterParams): string {
   if (params.yearMin !== YEAR_MIN) sp.set('ymin', String(params.yearMin));
   if (params.yearMax !== YEAR_MAX) sp.set('ymax', String(params.yearMax));
   if (params.sizeBucket !== 'all') sp.set('size', params.sizeBucket);
+  if (params.series !== 'all') sp.set('series', params.series);
   const qs = sp.toString();
   return qs ? `?${qs}` : '';
 }
@@ -127,6 +142,7 @@ export function parseFilterQuery(searchParams: URLSearchParams): FilterParams {
     yearMin: Number.isFinite(yminParam) && searchParams.has('ymin') ? yminParam : YEAR_MIN,
     yearMax: Number.isFinite(ymaxParam) && searchParams.has('ymax') ? ymaxParam : YEAR_MAX,
     sizeBucket: SIZE_BUCKETS.includes(sizeParam as SizeBucket) ? (sizeParam as SizeBucket) : DEFAULT_FILTER_PARAMS.sizeBucket,
+    series: SERIES.includes(searchParams.get('series') ?? '') ? searchParams.get('series')! : 'all',
   };
 }
 
@@ -136,10 +152,11 @@ export function useArtworks() {
   const [yearMin, setYearMin] = useState(YEAR_MIN);
   const [yearMax, setYearMax] = useState(YEAR_MAX);
   const [sizeBucket, setSizeBucket] = useState<SizeBucket>('all');
+  const [series, setSeries] = useState('all');
 
   const filtered = useMemo(
-    () => filterAndSortArtworks(artworks, { search, sortKey, yearMin, yearMax, sizeBucket }),
-    [search, sortKey, yearMin, yearMax, sizeBucket],
+    () => filterAndSortArtworks(artworks, { search, sortKey, yearMin, yearMax, sizeBucket, series }),
+    [search, sortKey, yearMin, yearMax, sizeBucket, series],
   );
 
   return {
@@ -155,6 +172,8 @@ export function useArtworks() {
     setYearMax,
     sizeBucket,
     setSizeBucket,
+    series,
+    setSeries,
   };
 }
 

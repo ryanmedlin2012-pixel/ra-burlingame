@@ -1,9 +1,11 @@
-import type { SizeBucket, SortKey } from '../hooks/useArtworks';
+import { SERIES, type SizeBucket, type SortKey } from '../hooks/useArtworks';
 import styles from './FilterBar.module.css';
 
 interface Props {
   search: string;
   onSearchChange: (v: string) => void;
+  series: string;
+  onSeriesChange: (v: string) => void;
   sortKey: SortKey;
   onSortChange: (v: SortKey) => void;
   yearMin: number;
@@ -40,6 +42,25 @@ export default function FilterBar(props: Props) {
           onChange={(e) => props.onSearchChange(e.target.value)}
           placeholder="title..."
         />
+      </div>
+
+      <div className={styles.group}>
+        <label className={styles.label} htmlFor="series">
+          SERIES
+        </label>
+        <select
+          id="series"
+          className={styles.select}
+          value={props.series}
+          onChange={(e) => props.onSeriesChange(e.target.value)}
+        >
+          <option value="all">ALL</option>
+          {SERIES.map((s) => (
+            <option key={s} value={s}>
+              {s.toUpperCase()}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className={styles.group}>

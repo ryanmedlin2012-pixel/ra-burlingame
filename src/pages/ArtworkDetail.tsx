@@ -170,6 +170,12 @@ export default function ArtworkDetail() {
                 <dd>{artwork.notes}</dd>
               </>
             )}
+            {artwork.series.length > 0 && (
+              <>
+                <dt>SERIES</dt>
+                <dd>{artwork.series.join(', ')}</dd>
+              </>
+            )}
             {artwork.bodyOfWork && (
               <>
                 <dt>COLLECTION</dt>

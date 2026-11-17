@@ -2,6 +2,9 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  /* the featured carousel bleeds into the right gutter; 100vw includes
+     the scrollbar, so clip rather than let the page scroll sideways */
+  overflow-x: clip;
 }
 
 .page {

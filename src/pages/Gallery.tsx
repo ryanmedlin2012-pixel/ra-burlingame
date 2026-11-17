@@ -4,6 +4,9 @@ import Nav from '../components/Nav';
 import FilterBar from '../components/FilterBar';
 import GalleryGrid from '../components/GalleryGrid';
 import Footer from '../components/Footer';
+import FeaturedCarousel from '../components/FeaturedCarousel';
+
+const FEATURED_SERIES = 'Psychological landscape';
 import styles from './Gallery.module.css';
 
 export default function Gallery() {
@@ -20,9 +23,11 @@ export default function Gallery() {
     setYearMax,
     sizeBucket,
     setSizeBucket,
+    series,
+    setSeries,
   } = useArtworks();
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const linkQuery = buildFilterQuery({ search, sortKey, yearMin, yearMax, sizeBucket });
+  const linkQuery = buildFilterQuery({ search, sortKey, yearMin, yearMax, sizeBucket, series });
 
   return (
     <div className={styles.root}>
@@ -45,6 +50,8 @@ export default function Gallery() {
           <FilterBar
             search={search}
             onSearchChange={setSearch}
+            series={series}
+            onSeriesChange={setSeries}
             sortKey={sortKey}
             onSortChange={setSortKey}
             yearMin={yearMin}
@@ -59,6 +66,8 @@ export default function Gallery() {
             total={total}
           />
         </div>
+
+        <FeaturedCarousel series={FEATURED_SERIES} />
 
         <GalleryGrid artworks={artworks} linkQuery={linkQuery} />
       </div>

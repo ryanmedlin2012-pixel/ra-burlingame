@@ -498,6 +498,64 @@ PIECE_METADATA: dict[str, dict] = {
 }
 
 
+# Body-of-work tags (a piece can sit in several). Keep names in sync with
+# SERIES in src/hooks/useArtworks.ts.
+PL, RES, COL, CUR, SEX, HAU = (
+    "Psychological landscape", "Resin", "Collage / assemblage", "Curtains", "Sex", "Haunted space",
+)
+SERIES_TAGS: dict[str, list[str]] = {
+    "2026-03-23-aloe-01": [PL],
+    "2026-03-23-atck-01": [PL],
+    "2026-03-23-lunar-01": [COL],
+    "2026-03-23-temperance-guild-01": [PL],
+    "2025-02-27-1982-01": [PL],
+    "2025-02-27-dark-mountain-01": [PL, HAU],
+    "2025-02-27-see-you-01": [RES],
+    "2025-02-27-see-you-02": [RES],
+    "2024-10-29-blue-sunshine-05": [PL],
+    "2024-10-29-magic-mountain-01": [PL],
+    "2024-10-29-untitled-31-01": [CUR],
+    "2024-10-29-untitled-32-01": [HAU],
+    "201": [COL],
+    "2023-05-25-chirotic-mileau-01": [CUR, HAU],
+    "2023-01-24-untitled-28-01": [PL],
+    "2023-01-24-untitled-30-01": [PL],
+    "2023-01-20-untitled-21-01": [PL],
+    "2023-01-20-untitled-25-01": [PL],
+    "2023-01-20-untitled-23-01": [PL],
+    "2023-01-20-untitled-26-01": [PL],
+    "2024-10-29-untitled-301-01": [PL],
+    "2024-10-29-untitled-33-01": [CUR, HAU],
+    "2023-01-20-untitled-22-01": [CUR],
+    "2023-01-24-untitled-27-01": [PL],
+    "2023-01-24-untitled-62-01": [PL],
+    "2015-09-17-crisco-01": [COL],
+    "2015-09-17-self-moment-01": [PL, RES],
+    "2013-10-05-untitled-141-01": [PL, RES, COL],
+    "2013-10-05-untitled-61-01": [COL],
+    "2013-08-10-untitled-91-01": [COL],
+    "2013-08-10-untitled-20-01": [COL],
+    "2013-08-10-untitled-18-01": [COL],
+    "2013-08-10-gene-01": [COL],
+    "2013-08-10-untitled-19-01": [COL],
+    "2013-08-03-untitled-11-01": [COL, RES],
+    "2011-10-16-new-religion-2-01": [COL, RES],
+    "2013-08-03-new-religion-11-01": [COL, RES],
+    "2013-07-14-untitled-10-01": [COL],
+    "2013-07-13-helen-anne-01": [COL],
+    "2013-07-13-psychic-twinks-1-01": [COL, RES],
+    "203": [COL, RES],
+    "011": [COL],
+    "2013-08-10-fresh-meat-market-01": [COL],
+    "210": [COL],
+    "2013-08-10-untitled-92-01": [COL],
+    "2013-08-10-untitled-15-01": [COL],
+    "021": [COL],
+    "2013-07-14-untitled-8-01": [COL],
+    "2013-08-10-dennis-01": [COL],
+}
+
+
 def compute_vignette(photo_id: str, piece_id: str) -> tuple[bool, int, int]:
     """(enabled, blur, inset) for one photo — photo-level override wins,
     otherwise falls back to the piece-level default/override."""
@@ -566,6 +624,10 @@ CROP_TO_ART = True
 ART_CROP_OVERRIDES: dict[str, tuple[int, int, int, int] | None] = {
     "2": None,  # superstar specials alt — detector cropped to a white sliver
     "2026-03-23-atck-01": (488, 488, 9494, 7648),  # trim bottom drop shadow
+    "2026-03-23-lunar-01": (687, 464, 7631, 7843),  # trim bottom drop shadow
+    "2026-03-23-temperance-guild-01": (410, 382, 8063, 7998),  # trim bottom drop shadow
+    "2024-10-29-blue-sunshine-05": (460, 396, 4734, 4738),  # inset ~30px all sides past canvas edge
+    "201": (284, 56, 923, 835),  # Urine Test — shave bottom shadow
 }
 
 
@@ -800,6 +862,7 @@ def main():
             "shows": shows,
             "notes": notes,
             "bodyOfWork": body_of_work,
+            "series": SERIES_TAGS.get(artwork_id, []),
             "thumb": f"/{thumb_rel}",
             "cardThumb": f"/{card_thumb_rel}" if card_thumb_rel else None,
             "full": f"/{full_rel}",
