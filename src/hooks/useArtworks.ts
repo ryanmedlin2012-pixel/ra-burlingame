@@ -54,9 +54,7 @@ export const SERIES = [
   'Psychological landscape',
   'Resin',
   'Collage / assemblage',
-  'Curtains',
-  'Sex',
-  'Haunted space',
+  'Haunted spaces (curtains)',
 ];
 
 /** Series with at least one piece — empty ones stay out of the UI. */

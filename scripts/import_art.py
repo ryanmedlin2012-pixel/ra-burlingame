@@ -500,8 +500,8 @@ PIECE_METADATA: dict[str, dict] = {
 
 # Body-of-work tags (a piece can sit in several). Keep names in sync with
 # SERIES in src/hooks/useArtworks.ts.
-PL, RES, COL, CUR, SEX, HAU = (
-    "Psychological landscape", "Resin", "Collage / assemblage", "Curtains", "Sex", "Haunted space",
+PL, RES, COL, HAU = (
+    "Psychological landscape", "Resin", "Collage / assemblage", "Haunted spaces (curtains)",
 )
 SERIES_TAGS: dict[str, list[str]] = {
     "2026-03-23-aloe-01": [PL],
@@ -514,10 +514,10 @@ SERIES_TAGS: dict[str, list[str]] = {
     "2025-02-27-see-you-02": [RES],
     "2024-10-29-blue-sunshine-05": [PL],
     "2024-10-29-magic-mountain-01": [PL],
-    "2024-10-29-untitled-31-01": [CUR],
+    "2024-10-29-untitled-31-01": [HAU],
     "2024-10-29-untitled-32-01": [HAU],
     "201": [COL],
-    "2023-05-25-chirotic-mileau-01": [CUR, HAU],
+    "2023-05-25-chirotic-mileau-01": [HAU],
     "2023-01-24-untitled-28-01": [PL],
     "2023-01-24-untitled-30-01": [PL],
     "2023-01-20-untitled-21-01": [PL],
@@ -525,8 +525,8 @@ SERIES_TAGS: dict[str, list[str]] = {
     "2023-01-20-untitled-23-01": [PL],
     "2023-01-20-untitled-26-01": [PL],
     "2024-10-29-untitled-301-01": [PL],
-    "2024-10-29-untitled-33-01": [CUR, HAU],
-    "2023-01-20-untitled-22-01": [CUR],
+    "2024-10-29-untitled-33-01": [HAU],
+    "2023-01-20-untitled-22-01": [HAU],
     "2023-01-24-untitled-27-01": [PL],
     "2023-01-24-untitled-62-01": [PL],
     "2015-09-17-crisco-01": [COL],
