@@ -1,4 +1,4 @@
-import { SERIES, type SizeBucket, type SortKey } from '../hooks/useArtworks';
+import { ACTIVE_SERIES, type SizeBucket, type SortKey } from '../hooks/useArtworks';
 import styles from './FilterBar.module.css';
 
 interface Props {
@@ -55,7 +55,7 @@ export default function FilterBar(props: Props) {
           onChange={(e) => props.onSeriesChange(e.target.value)}
         >
           <option value="all">ALL</option>
-          {SERIES.map((s) => (
+          {ACTIVE_SERIES.map((s) => (
             <option key={s} value={s}>
               {s.toUpperCase()}
             </option>

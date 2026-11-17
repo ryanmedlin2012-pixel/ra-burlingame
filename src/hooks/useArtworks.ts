@@ -59,6 +59,9 @@ export const SERIES = [
   'Haunted space',
 ];
 
+/** Series with at least one piece — empty ones stay out of the UI. */
+export const ACTIVE_SERIES = SERIES.filter((s) => artworks.some((a) => a.series.includes(s)));
+
 const knownYears = artworks
   .map((a) => a.year)
   .filter((y): y is number => y != null);

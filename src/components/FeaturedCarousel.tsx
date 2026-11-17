@@ -1,20 +1,24 @@
 import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { artworks, buildFilterQuery, filterAndSortArtworks, YEAR_MAX, YEAR_MIN } from '../hooks/useArtworks';
+import type { Artwork } from '../hooks/useArtworks';
 import styles from './FeaturedCarousel.module.css';
 
 const DRAG_THRESHOLD = 5;
 const FRICTION = 0.94; // per-frame velocity decay for the glide after a drag
 
-export default function FeaturedCarousel({ series }: { series: string }) {
+export default function FeaturedCarousel({
+  title,
+  pieces,
+  linkQuery,
+}: {
+  title: string;
+  pieces: Artwork[];
+  linkQuery: string;
+}) {
   const trackRef = useRef<HTMLDivElement>(null);
   const drag = useRef({ active: false, moved: false, startX: 0, startScroll: 0, lastX: 0, lastT: 0, velocity: 0 });
   const glide = useRef(0);
   const [dragging, setDragging] = useState(false);
-
-  const params = { search: '', sortKey: 'date-desc' as const, yearMin: YEAR_MIN, yearMax: YEAR_MAX, sizeBucket: 'all' as const, series };
-  const pieces = filterAndSortArtworks(artworks, params);
-  const linkQuery = buildFilterQuery(params);
 
   if (pieces.length === 0) return null;
 
@@ -94,7 +98,7 @@ export default function FeaturedCarousel({ series }: { series: string }) {
   return (
     <section className={styles.section}>
       <div className={styles.header}>
-        <h2 className={styles.title}>{series}</h2>
+        <h2 className={styles.title}>{title}</h2>
         <div className={styles.arrows}>
           <button type="button" className={styles.arrow} onClick={() => scrollBy(-1)} aria-label="Scroll left">
             ←

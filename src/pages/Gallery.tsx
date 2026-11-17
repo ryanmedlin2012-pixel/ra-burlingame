@@ -1,13 +1,22 @@
-import { useState } from 'react';
-import { buildFilterQuery, useArtworks, YEAR_MAX, YEAR_MIN } from '../hooks/useArtworks';
+import { useMemo, useState } from 'react';
+import {
+  ACTIVE_SERIES,
+  artworks as allArtworks,
+  buildFilterQuery,
+  filterAndSortArtworks,
+  useArtworks,
+  YEAR_MAX,
+  YEAR_MIN,
+} from '../hooks/useArtworks';
 import Nav from '../components/Nav';
 import FilterBar from '../components/FilterBar';
 import GalleryGrid from '../components/GalleryGrid';
 import Footer from '../components/Footer';
 import FeaturedCarousel from '../components/FeaturedCarousel';
+import SeriesTiles from '../components/SeriesTiles';
+import styles from './Gallery.module.css';
 
 const FEATURED_SERIES = 'Psychological landscape';
-import styles from './Gallery.module.css';
 
 export default function Gallery() {
   const {
@@ -28,6 +37,14 @@ export default function Gallery() {
   } = useArtworks();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const linkQuery = buildFilterQuery({ search, sortKey, yearMin, yearMax, sizeBucket, series });
+
+  const featuredParams = { search, sortKey, yearMin, yearMax, sizeBucket, series: FEATURED_SERIES };
+  const featuredQuery = buildFilterQuery(featuredParams);
+  const featuredPieces = useMemo(
+    () => filterAndSortArtworks(allArtworks, featuredParams),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [search, sortKey, yearMin, yearMax, sizeBucket],
+  );
 
   return (
     <div className={styles.root}>
@@ -67,9 +84,23 @@ export default function Gallery() {
           />
         </div>
 
-        <FeaturedCarousel series={FEATURED_SERIES} />
-
-        <GalleryGrid artworks={artworks} linkQuery={linkQuery} />
+        {series === 'all' ? (
+          <>
+            <FeaturedCarousel title={FEATURED_SERIES} pieces={featuredPieces} linkQuery={featuredQuery} />
+            <GalleryGrid artworks={artworks} linkQuery={linkQuery} />
+          </>
+        ) : (
+          <>
+            <FeaturedCarousel key={series} title={series} pieces={artworks} linkQuery={linkQuery} />
+            <SeriesTiles
+              series={ACTIVE_SERIES.filter((s) => s !== series)}
+              onSelect={(s) => {
+                setSeries(s);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
+          </>
+        )}
       </div>
       <Footer />
     </div>
